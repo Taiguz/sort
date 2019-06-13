@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Trabalho Análise de Algoritmos</title>
+  <link rel="stylesheet" href="./estilo.css" />
+</head>
+
+<body>
+  <main>
+    <graficos>
+      <h2>Gráficos</h2>
+      <nav id="navgraphs">
+        <bt>Barras</bt>
+        <bt>Pizza</bt>
+      </nav>
+      <barras id="barras">
+
+      </barras>
+      <pizzas>
+
+      </pizzas>
+    </graficos>
+    <ranking>
+      <h2>Ranking</h2>
+      <nav id="navrank">
+        <bt>Trocas</bt>
+        <bt>Comparações</bt>
+      </nav>
+      <ranktrocas>
+        <rankitem>
+          <item>1</item>
+          <item>QuickSort</item>
+          <item>500</item>
+        </rankitem>
+        <rankitem>
+          <item>2</item>
+          <item>InsertionSort</item>
+          <item>700</item>
+        </rankitem>
+      </ranktrocas>
+      <rankcomparacoes>
+        <rankitem>
+          <item>1</item>
+          <item>QuickSort</item>
+          <item>500</item>
+        </rankitem>
+        <rankitem>
+          <item>2</item>
+          <item>InsertionSort</item>
+          <item>700</item>
+        </rankitem>
+      </rankcomparacoes>
+    </ranking>
+  </main>
+  <controller>
+    <vetor></vetor>
+    <form>
+      <div>
+        <v>Tamanho:</v><input type="number" min="0" max="100" placeholder="Tamanho...">
+      </div>
+      <div>
+        <v>Ordenação:</v> <select>
+          <option>Aleatório</option>
+          <option>Invertido</option>
+          <option>Partes Repetidas</option>
+          <option>Quase Ordenado</option>
+        </select>
+      </div>
+      <bt>Gerardd</bt>
+    </form>
+
+  </controller>
+  <script>
+    require("./order.js");
+  </script>
+</body>
+
+</html>
