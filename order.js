@@ -48,7 +48,6 @@ class Pie {
                 },
                 legend: {
                     labels: {
-                        // This more specific font property overrides the global property
                         fontColor: 'black',
                         fontSize: 24
                     }
@@ -449,6 +448,29 @@ class Controller {
         })
     }
 }
+class Vetor {
+
+    constructor(options) {
+
+        this.vetor = document.getElementsByTagName('vetor')[0]
+        this.drawVetor()
+    }
+    drawVetor() {
+        this.vetor.textContent = `[${this.constructReverseVetor(50).join(',')}]`
+        debugger
+    }
+    constructReverseVetor(length) {
+
+        let vetor = []
+        for (let i = (length - 1); i > 0; i--) {
+            vetor.push(i)
+        }
+        return vetor
+
+    }
+
+}
+
 let controller = new Controller({
     directory: 'resultados',
     animationDuration: 60,
@@ -460,6 +482,8 @@ let controller = new Controller({
     endColor: '#006600',
     delay: 5
 })
+
+let vetor = new Vetor()
 
 controller.playAll()
 
