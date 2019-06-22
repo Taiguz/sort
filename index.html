@@ -15,12 +15,14 @@
         <bt>Barras</bt>
         <bt>Pizza</bt>
       </nav>
-      <barras id="barras">
+      <container>
+        <barras id="barras">
 
-      </barras>
-      <pizzas>
+        </barras>
+        <pizzas>
 
-      </pizzas>
+        </pizzas>
+      </container>
     </graficos>
     <ranking>
       <h2>Ranking</h2>
@@ -59,17 +61,17 @@
 
     <form>
       <div>
-        <v>Tamanho:</v><input type="number" min="0" max="100">
+        <v>Tamanho:</v><input id="tamanho" type="number" min="5" max="100" value="50">
       </div>
       <div>
-        <v>Ordenação:</v> <select>
-          <option>Aleatório</option>
-          <option>Invertido</option>
-          <option>Partes Repetidas</option>
-          <option>Quase Ordenado</option>
+        <v>Ordenação:</v> <select id="ordenacao">
+          <option value="aleatorio">Aleatório</option>
+          <option value="invertido">Invertido</option>
+          <option value="repetidas">Partes Repetidas</option>
+          <option value="quaseOrdenado">Quase Ordenado</option>
         </select>
       </div>
-      <bt>Gerar Vetor</bt>
+      <bt id="gerar">Gerar Vetor</bt>
     </form>
 
   </controller>
