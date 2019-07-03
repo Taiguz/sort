@@ -581,7 +581,7 @@ class Vetor {
 
                     if (process.platform === "win32") {
 
-                        command = `cd "${caminho}" && ${programa}.exe`
+                        command = `cd "${caminho}" && ${programa}`
 
                     } else {
                         command = `cd "${caminho}" && ./${programa}`
