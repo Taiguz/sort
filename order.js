@@ -159,8 +159,11 @@ class Graph {
 
             this.estados.forEach((estado, ind) => {
 
-                if (ind == (this.estados.length - 1)) estado.last = true
-
+                if (ind == (this.estados.length - 1)) {
+                    console.log(ind)
+                    estado.last = true
+                    estado.ind = ind
+                }
                 this.update(estado, this.delay * (ind + 1))
 
             })
@@ -209,6 +212,7 @@ class Graph {
                 this.chart.data.datasets[0].backgroundColor = backgroundColor
                 this.chart.update();
                 if (estado.last) {
+                    console.log(estado.last, estado.ind)
                     this.controller.addItem({
                         name: this.name,
                         totalTrocas: this.totalTrocas,
@@ -437,7 +441,7 @@ class Controller {
     }
     addItem(ob) {
 
-
+        console.log(ob)
 
         let rankitem = document.createElement('rankitem')
         rankitem.innerHTML = `<item>${this.ranktrocas.children.length + 1}</item><item>${ob.name}</item><item>${ob.totalTrocas}</item>`
@@ -476,6 +480,7 @@ class Vetor {
         this.gerar = document.getElementById('gerar')
         this.barra = document.getElementById('barras')
         this.pizza = document.getElementsByTagName('PIZZAS')[0]
+        this.anim = document.getElementById('anim')
         this.min = 5
         this.max = 100
         this.drawVetor()
@@ -544,16 +549,17 @@ class Vetor {
         this.barra.innerHTML = ''
         this.pizza.innerHTML = ''
         this.controller = null
+        this.anim.value = parseInt(this.anim.value) <= 100 || parseInt(this.anim.value) >= 5 ? parseInt(this.anim.value) : 5
         this.controller = new Controller({
             directory: 'resultados',
-            animationDuration: 60,
+            animationDuration: 100,
             titleSize: 26,
             axisFontSize: 24,
             compareColor: 'orange',
             changeColor: 'red',
             defaultColor: 'green',
             endColor: '#006600',
-            delay: 5
+            delay: parseInt(this.anim.value)
         })
         this.controller.playAll()
 
