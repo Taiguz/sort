@@ -66,6 +66,7 @@ void selection_sort(int *vetor, int tamanho_vetor) {
     fprintf(write, "\n}");
 }
 
+
 void readFile(int *values) {
     // Abrindo arquivo
     FILE *archive;

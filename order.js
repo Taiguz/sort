@@ -1,5 +1,7 @@
 const fs = require('fs')
 const Chart = require('chart.js')
+const path = require('path')
+const { exec } = require('child_process');
 
 class Pie {
 
@@ -157,8 +159,11 @@ class Graph {
 
             this.estados.forEach((estado, ind) => {
 
-                if (ind == (this.estados.length - 1)) estado.last = true
-
+                if (ind == (this.estados.length - 1)) {
+                    console.log(ind)
+                    estado.last = true
+                    estado.ind = ind
+                }
                 this.update(estado, this.delay * (ind + 1))
 
             })
@@ -207,6 +212,7 @@ class Graph {
                 this.chart.data.datasets[0].backgroundColor = backgroundColor
                 this.chart.update();
                 if (estado.last) {
+                    console.log(estado.last, estado.ind)
                     this.controller.addItem({
                         name: this.name,
                         totalTrocas: this.totalTrocas,
@@ -304,15 +310,13 @@ class Controller {
     }
     getGraphsBts() {
         this.graphnav = document.getElementById('navgraphs')
-        this.telasgraph = Array.from(document.getElementsByTagName('graficos')[0].children)
+        let container = document.getElementsByTagName('graficos')[0].children[2]
+        let getWidth = document.getElementsByTagName('graficos')[0]
+        this.telasgraph = Array.from(document.getElementsByTagName('graficos')[0].children[2])
             .filter(rank => rank.tagName != "NAV" && rank.tagName != "H2")
         this.graphbts = this.graphnav.children
-        Array.from(this.telasgraph).forEach((tela, index) => {
 
-            tela.style.display = 'none'
-        })
-        this.telasgraph[0].style.display = 'flex'
-
+        container.style.left = '0px'
         Array.from(this.graphbts).forEach(btItem => {
             btItem.classList.remove('active')
         })
@@ -321,6 +325,8 @@ class Controller {
         Array.from(this.graphbts).forEach((bt, ind) => {
 
             bt.onclick = () => {
+                let width = window.getComputedStyle(getWidth).getPropertyValue('width')
+                width = `-${width}`
 
                 Array.from(this.graphbts).forEach(btItem => {
                     btItem.classList.remove('active')
@@ -328,23 +334,29 @@ class Controller {
 
                 bt.classList.add('active')
 
-                Array.from(this.telasgraph).forEach((tela, index) => {
+                if (ind == 0) {
+                    container.style.left = '0px'
 
-                    if (index != ind) tela.style.display = 'none'
-                })
+                } else {
+                    container.style.left = width
 
-                this.telasgraph[ind].style.display = 'flex'
+                }
 
             }
 
         })
+    }
+
+    requireUncached(module) {
+        delete require.cache[require.resolve(module)]
+        return require(module)
     }
     getFiles() {
 
         this.files = fs.readdirSync(`./${this.directory}`)
         this.files = this.files.map(file => {
             let name = file.split('.')[0]
-            let jsonContent = require(`./${this.directory}/${file}`)
+            let jsonContent = this.requireUncached(`./${this.directory}/${file}`)
             return { name, jsonContent }
         })
     }
@@ -368,6 +380,16 @@ class Controller {
         return colors
 
     }
+    // resetFiles() {
+    //     this.getFiles()
+    //     this.graphs.forEach(graph => {
+
+    //         let fileGraph = this.files.find(file => file.name == graph.name)
+    //         const { estados, totalTrocas, totalComparacoes } = file.jsonContent
+    //         graph.estados = estados
+    //         graph.totalComparacoes = totalComparacoes
+    //     })
+    // }
     createGraphs() {
 
         let names = []
@@ -419,7 +441,7 @@ class Controller {
     }
     addItem(ob) {
 
-
+        console.log(ob)
 
         let rankitem = document.createElement('rankitem')
         rankitem.innerHTML = `<item>${this.ranktrocas.children.length + 1}</item><item>${ob.name}</item><item>${ob.totalTrocas}</item>`
@@ -453,11 +475,294 @@ class Vetor {
     constructor(options) {
 
         this.vetor = document.getElementsByTagName('vetor')[0]
+        this.tamanho = document.getElementById('tamanho')
+        this.ordenacao = document.getElementById('ordenacao')
+        this.gerar = document.getElementById('gerar')
+        this.barra = document.getElementById('barras')
+        this.pizza = document.getElementsByTagName('PIZZAS')[0]
+        this.anim = document.getElementById('anim')
+        this.min = 5
+        this.max = 100
         this.drawVetor()
+        this.controller = null
+        this.gerar.onclick = () => {
+            if (!this.check()) {
+                this.drawVetor()
+            }
+
+        }
+
     }
+
+    check() {
+        let val = parseInt(this.tamanho.value)
+        return (val > this.max || val < this.min)
+
+    }
+
+    compile(programasc) {
+
+        return new Promise((resolve, reject) => {
+
+            let caminho = path.resolve(__dirname, 'programas')
+
+            let compilados = []
+
+            programasc.forEach(programa => {
+
+                compilados.push(new Promise(resolve => {
+
+                    let name = programa.split('.')[0]
+
+                    const child = exec(`cd "${caminho}" && gcc -o ${name} ${programa}`, (error, stdout, stderr) => {
+                        if (error) {
+                            reject(error)
+                        }
+                        resolve()
+                        console.log(stdout);
+                    });
+                }))
+
+            })
+
+            Promise.all(compilados)
+                .then(compilado => {
+
+                    resolve(compilado)
+                })
+                .catch(erro => {
+
+                    reject(erro)
+                })
+
+
+        })
+
+
+
+
+
+    }
+
+    playGraphs() {
+
+        this.barra.innerHTML = ''
+        this.pizza.innerHTML = ''
+        this.controller = null
+        this.anim.value = parseInt(this.anim.value) <= 100 || parseInt(this.anim.value) >= 5 ? parseInt(this.anim.value) : 5
+        this.controller = new Controller({
+            directory: 'resultados',
+            animationDuration: 100,
+            titleSize: 26,
+            axisFontSize: 24,
+            compareColor: 'orange',
+            changeColor: 'red',
+            defaultColor: 'green',
+            endColor: '#006600',
+            delay: parseInt(this.anim.value)
+        })
+        this.controller.playAll()
+
+    }
+
+    executarArquivos(programas) {
+
+
+        return new Promise((resolve, reject) => {
+
+            let caminho = path.resolve(__dirname, 'programas')
+
+            let executados = []
+            programas.forEach(programa => {
+
+                executados.push(new Promise(resolve => {
+
+                    let command
+
+                    if (process.platform === "win32") {
+
+                        command = `cd "${caminho}" && ${programa}.exe`
+
+                    } else {
+                        command = `cd "${caminho}" && ./${programa}`
+                    }
+
+                    const child = exec(command, (error, stdout, stderr) => {
+                        if (error) {
+                            reject(error)
+                        }
+                        resolve('executado');
+                    });
+
+                }))
+
+            })
+
+            Promise.all(executados)
+                .then(compilado => {
+
+                    resolve(compilado)
+                })
+                .catch(erro => {
+
+                    reject(erro)
+                })
+
+
+        })
+
+    }
+
+    checarArquivos() {
+        let programasc
+        let programas
+
+        const readDir = () => {
+            let caminho = path.resolve(__dirname, 'programas')
+            let files = fs.readdirSync(caminho)
+            programasc = files
+                .filter(file => file.split('.')[1] == 'c')
+            if (process.platform === "win32") {
+
+                programas = files
+                    .filter(file => file.split('.')[1] == 'exe')
+
+            } else {
+
+                programas = files
+                    .filter(file => file.split('.')[1] == undefined)
+            }
+
+        }
+
+        readDir()
+
+        if (programas.length != programasc.length) {
+
+            this.compile(programasc)
+                .then(resolve => {
+                    readDir()
+                    this.executarArquivos(programas)
+                        .then(executados => {
+
+                            this.playGraphs()
+
+                        })
+                        .catch(error => {
+
+                            console.log(error)
+                        })
+                })
+                .catch(reject => {
+                    console.log(reject)
+                })
+
+        } else {
+            this.executarArquivos(programas)
+                .then(executados => {
+                    this.playGraphs()
+                })
+                .catch(error => {
+
+                    console.log(error)
+                })
+        }
+
+
+    }
+
+
+    writeFile(vetor, ref) {
+
+        return new Promise(resolve => {
+
+            let caminho = path.resolve(__dirname, 'programas', 'dados.dat')
+            let data = vetor.join(',')
+            fs.writeFile(caminho, data, (err) => {
+                if (err) throw err;
+                ref.checarArquivos()
+            });
+        })
+
+    }
+
     drawVetor() {
-        this.vetor.textContent = `[${this.constructReverseVetor(50).join(',')}]`
-        debugger
+        let val = parseInt(this.tamanho.value)
+        let vetor;
+        switch (this.ordenacao.value) {
+
+            case 'aleatorio':
+                vetor = this.constructRandomVetor(val)
+                this.writeFile(vetor, this)
+                this.vetor.textContent = `[${vetor.join(',')}]`
+                break
+
+            case 'invertido':
+                vetor = this.constructReverseVetor(val)
+                this.writeFile(vetor, this)
+                this.vetor.textContent = `[${vetor.join(',')}]`
+                break
+
+            case 'repetidas':
+                vetor = this.constructRepetidoVetor(val)
+                this.writeFile(vetor, this)
+                this.vetor.textContent = `[${vetor.join(',')}]`
+                break
+
+            case 'quaseOrdenado':
+                vetor = this.constructQuaseOrdenadoVetor(val)
+                this.writeFile(vetor, this)
+                this.vetor.textContent = `[${vetor.join(',')}]`
+                break
+        }
+
+
+    }
+
+    constructQuaseOrdenadoVetor(length) {
+
+        let vetor = []
+        for (let i = 0; i < length; i++) {
+            if (i == length - 1) {
+                vetor.push(-1)
+            } else {
+
+                vetor.push(i)
+            }
+        }
+        return vetor
+    }
+
+    constructRepetidoVetor(length) {
+
+        let vetor = []
+        let repetirTamanho = Math.ceil((length / 5))
+        let count = 1
+        let val = 1
+        while (vetor.length <= length) {
+            if (count <= repetirTamanho) {
+
+                vetor.push(val)
+                count++
+
+            } else {
+
+                count = 0
+                val++
+            }
+        }
+
+        return this.shuffle(vetor)
+
+    }
+
+    constructRandomVetor(length) {
+
+        let vetor = []
+        for (let i = 0; i < length; i++) {
+            vetor.push(Math.floor(Math.random() * (length + 1)))
+        }
+        return vetor
     }
     constructReverseVetor(length) {
 
@@ -468,24 +773,26 @@ class Vetor {
         return vetor
 
     }
+    shuffle(array) {
+        var currentIndex = array.length, temporaryValue, randomIndex;
 
+        while (0 !== currentIndex) {
+
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+
+        return array;
+    }
 }
 
-let controller = new Controller({
-    directory: 'resultados',
-    animationDuration: 60,
-    titleSize: 26,
-    axisFontSize: 24,
-    compareColor: 'orange',
-    changeColor: 'red',
-    defaultColor: 'green',
-    endColor: '#006600',
-    delay: 5
-})
+
 
 let vetor = new Vetor()
 
-controller.playAll()
 
 
 
