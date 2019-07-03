@@ -12,55 +12,66 @@ void imprime_vetor(int *vetor, int tamanho_vetor) {
     printf("\n");
 }
 
-void selection_sort(int *vetor, int tamanho_vetor) {
+void insertionSort(int array[], int size) {
     FILE *write;
-    write = fopen("../resultados/selectionSort.json", "w+");
+    write = fopen("../resultados/insertionSort.json", "w+");
     fprintf(write, "%s%s", "{\n\n", "  \"estados\": [\n");
-    int menor = 0, totalComparacoes = 0, totalTrocas = 0;
-    for (int i = 0; i < tamanho_vetor; i++) {
-        menor = i;
-        // comparacao
-        for (int j = i; j < tamanho_vetor; j++) {
-            fprintf(write, "    {");
-            if (i == 0 && j == 0) {
-                fprintf(write, "    \"estado\": [");
-                for (int x = 0; x < tamanho_vetor; x++) {
-                    fprintf(write, "%d", vetor[x]);
-                    if (x != tamanho_vetor - 1) fprintf(write, "%s", ",");
-                }
-                fprintf(write, "],");
-            }
-            fprintf(write, "%s%d%s%d%s", "\"comparacao\":[", j, ",", menor,
-                    "]}");
-            fprintf(write, "%s", ",\n");
-            // file management end
 
-            totalComparacoes++;
-            if (vetor[j] < vetor[menor]) {
-                menor = j;
-            }
-        }
+    int j, key, totalComparacoes = 0, totalTrocas = 0;
+    fprintf(write, "   {");
+    fprintf(write, "    \"estado\": [");
 
-        int aux = vetor[i];
-        vetor[i] = vetor[menor];
-        vetor[menor] = aux;
-        totalTrocas++;
-
-        // troca
-        fprintf(write, "    {\"estado\": [");
-        for (int x = 0; x < tamanho_vetor; x++) {
-            fprintf(write, "%d", vetor[x]);
-            if (x != tamanho_vetor - 1) fprintf(write, "%s", ",");
-        }
-        fprintf(write, "%s%d%s%d%s", "], \"troca\":[", i, ",", menor, "]}");
-        if (i != tamanho_vetor - 1) {
-            fprintf(write, "%s", ",\n");
-        } else {
-            fprintf(write, "%s", "],\n");
-        }
-        // file management end
+    // Impressão estado inicial
+    for (int f = 0; f < size; f++) {
+        fprintf(write, "%d", array[f]);
+        if (f != size - 1) fprintf(write, "%s", ",");
     }
-    fprintf(write, "%s%d%s", "\t\"totalComparacoes\":", totalComparacoes,
+    fprintf(write, "],");
+
+    // começa
+    for (int i = 1; i < size; i++) {
+        key = array[i];
+        j = i - 1;
+        // comparação
+        printf("\n");
+        for (int w = j; w >= 0; w--) {
+            fprintf(write, "%s%d%s%d%s", " \"comparacao\": [", i, ",", w, "]}");
+            if (i == size - 1 && w == 0 &&
+                !(i == size - 1 && j + 1 == size - 1)) {
+                fprintf(write, "%s", "],");
+            } else {
+                fprintf(write, "%s", ",    \n\t {");
+            }
+        }
+
+        while (j >= 0 && array[j] > key) {
+            totalComparacoes++;
+            printf("j->%d\t", j);
+            printf("i->%d\n", i);
+            array[j + 1] = array[j];
+            j = j - 1;
+        }
+        // troca
+        totalTrocas++;
+        array[j + 1] = key;
+        //{ "estado": [], "troca":[]},
+        if (!(i == size - 1 && j + 1 == size - 1)) {
+            fprintf(write, "%s", "    \"estado\": [");
+            for (int z = 0; z < size; z++) {
+                fprintf(write, "%d", array[z]);
+                if (z != size - 1) fprintf(write, "%s", ",");
+            }
+            fprintf(write, "%s%d%s%d%s", "], \"troca\": [", i, ",", j + 1,
+                    "]}");
+        }
+        if (i == size - 1 && array[size - 1] != key) {
+            fprintf(write, "%s", "],\n");
+        } else {
+            fprintf(write, "%s", ",\n   {");
+        }
+    }
+
+    fprintf(write, "%s%d%s", "\n\t\"totalComparacoes\":", totalComparacoes,
             ",\n");
     fprintf(write, "%s%d%s", "\t\"totalTrocas\":", totalTrocas, "\n");
     fprintf(write, "\n}");
@@ -116,12 +127,14 @@ int counter_elements() {
     fclose(archive);
     return cont_elements;
 }
-
 int main(int argc, char const *argv[]) {
     int num_elementos = counter_elements();
+    printf("\n\n%d\n\n", num_elementos);
     int *values = (int *)malloc(num_elementos * sizeof(int));
     readFile(values);
-    selection_sort(values, num_elementos);
+
+    imprime_vetor(values, num_elementos);
+    insertionSort(values, num_elementos);
     imprime_vetor(values, num_elementos);
     return 0;
 }

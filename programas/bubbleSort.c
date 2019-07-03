@@ -12,17 +12,16 @@ void imprime_vetor(int *vetor, int tamanho_vetor) {
     printf("\n");
 }
 
-void selection_sort(int *vetor, int tamanho_vetor) {
+void bubble_sort(int *vetor, int tamanho_vetor) {
     FILE *write;
-    write = fopen("../resultados/selectionSort.json", "w+");
+    write = fopen("../resultados/bubbleSort.json", "w+");
     fprintf(write, "%s%s", "{\n\n", "  \"estados\": [\n");
-    int menor = 0, totalComparacoes = 0, totalTrocas = 0;
+    int aux = 0, totalComparacoes = 0, totalTrocas = 0;
     for (int i = 0; i < tamanho_vetor; i++) {
-        menor = i;
-        // comparacao
-        for (int j = i; j < tamanho_vetor; j++) {
+        for (int j = (tamanho_vetor - 1); j > i; j--) {
+            // comparacao
             fprintf(write, "    {");
-            if (i == 0 && j == 0) {
+            if (i == 0 && j == (tamanho_vetor - 1)) {
                 fprintf(write, "    \"estado\": [");
                 for (int x = 0; x < tamanho_vetor; x++) {
                     fprintf(write, "%d", vetor[x]);
@@ -30,35 +29,41 @@ void selection_sort(int *vetor, int tamanho_vetor) {
                 }
                 fprintf(write, "],");
             }
-            fprintf(write, "%s%d%s%d%s", "\"comparacao\":[", j, ",", menor,
+            fprintf(write, "%s%d%s%d%s", "\"comparacao\":[", j, ",", (j - 1),
                     "]}");
-            fprintf(write, "%s", ",\n");
-            // file management end
+            if (!(vetor[j] < vetor[j - 1]) && i == tamanho_vetor - 2) {
+                fprintf(write, "%s", "],\n");
+            } else {
+                fprintf(write, "%s", ",\n");
+            }
 
             totalComparacoes++;
-            if (vetor[j] < vetor[menor]) {
-                menor = j;
+            // fim comparacao
+            printf("\n[j] -> %d", j);
+            printf("\t[j - 1] -> %d\n", j - 1);
+            if (vetor[j] < vetor[j - 1]) {
+                printf("i -> %d \n", i);
+                aux = vetor[j];
+                vetor[j] = vetor[j - 1];
+                vetor[j - 1] = aux;
+                // troca
+                fprintf(write, "    {\"estado\": [");
+                for (int x = 0; x < tamanho_vetor; x++) {
+                    fprintf(write, "%d", vetor[x]);
+                    if (x != tamanho_vetor - 1) fprintf(write, "%s", ",");
+                }
+                fprintf(write, "%s%d%s%d%s", "], \"troca\":[", j, ",", (j - 1),
+                        "]}");
+
+                if (i == tamanho_vetor - 2) {
+                    fprintf(write, "%s", "],\n");
+                } else {
+                    fprintf(write, "%s", ",\n");
+                }
+                totalTrocas++;
+                // fim troca
             }
         }
-
-        int aux = vetor[i];
-        vetor[i] = vetor[menor];
-        vetor[menor] = aux;
-        totalTrocas++;
-
-        // troca
-        fprintf(write, "    {\"estado\": [");
-        for (int x = 0; x < tamanho_vetor; x++) {
-            fprintf(write, "%d", vetor[x]);
-            if (x != tamanho_vetor - 1) fprintf(write, "%s", ",");
-        }
-        fprintf(write, "%s%d%s%d%s", "], \"troca\":[", i, ",", menor, "]}");
-        if (i != tamanho_vetor - 1) {
-            fprintf(write, "%s", ",\n");
-        } else {
-            fprintf(write, "%s", "],\n");
-        }
-        // file management end
     }
     fprintf(write, "%s%d%s", "\t\"totalComparacoes\":", totalComparacoes,
             ",\n");
@@ -121,7 +126,8 @@ int main(int argc, char const *argv[]) {
     int num_elementos = counter_elements();
     int *values = (int *)malloc(num_elementos * sizeof(int));
     readFile(values);
-    selection_sort(values, num_elementos);
+    imprime_vetor(values, num_elementos);
+    bubble_sort(values, num_elementos);
     imprime_vetor(values, num_elementos);
     return 0;
 }
