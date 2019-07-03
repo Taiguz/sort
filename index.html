@@ -1,101 +1,96 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Trabalho Análise de Algoritmos</title>
+    <link rel="stylesheet" href="./estilo.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <title>Trabalho Análise de Algoritmos</title>
-  <link rel="stylesheet" href="./estilo.css" />
-</head>
+  <body>
+    <main>
+      <graficos>
+        <h2>Gráficos</h2>
+        <nav id="navgraphs">
+          <bt>Barras</bt>
+          <bt>Pizza</bt>
+        </nav>
+        <container>
+          <barras id="barras"> </barras>
+          <pizzas> </pizzas>
+        </container>
+      </graficos>
+      <ranking>
+        <h2>Ranking</h2>
+        <nav id="navrank">
+          <bt>Trocas</bt>
+          <bt>Comparações</bt>
+        </nav>
+        <ranktrocas>
+          <rankitem>
+            <item>1</item>
+            <item>QuickSort</item>
+            <item>500</item>
+          </rankitem>
+          <rankitem>
+            <item>2</item>
+            <item>InsertionSort</item>
+            <item>700</item>
+          </rankitem>
+        </ranktrocas>
+        <rankcomparacoes>
+          <rankitem>
+            <item>1</item>
+            <item>QuickSort</item>
+            <item>500</item>
+          </rankitem>
+          <rankitem>
+            <item>2</item>
+            <item>InsertionSort</item>
+            <item>700</item>
+          </rankitem>
+        </rankcomparacoes>
+      </ranking>
+    </main>
+    <controller>
+      <vetor></vetor>
 
-<body>
-  <main>
-    <graficos>
-      <h2>Gráficos</h2>
-      <nav id="navgraphs">
-        <bt>Barras</bt>
-        <bt>Pizza</bt>
-      </nav>
-      <container>
-        <barras id="barras">
-
-        </barras>
-        <pizzas>
-
-        </pizzas>
-      </container>
-    </graficos>
-    <ranking>
-      <h2>Ranking</h2>
-      <nav id="navrank">
-        <bt>Trocas</bt>
-        <bt>Comparações</bt>
-      </nav>
-      <ranktrocas>
-        <rankitem>
-          <item>1</item>
-          <item>QuickSort</item>
-          <item>500</item>
-        </rankitem>
-        <rankitem>
-          <item>2</item>
-          <item>InsertionSort</item>
-          <item>700</item>
-        </rankitem>
-      </ranktrocas>
-      <rankcomparacoes>
-        <rankitem>
-          <item>1</item>
-          <item>QuickSort</item>
-          <item>500</item>
-        </rankitem>
-        <rankitem>
-          <item>2</item>
-          <item>InsertionSort</item>
-          <item>700</item>
-        </rankitem>
-      </rankcomparacoes>
-    </ranking>
-  </main>
-  <controller>
-    <vetor></vetor>
-
-    <form>
-      <div>
-        <v>Tamanho:</v><input id="tamanho" type="number" min="5" max="100" value="50">
-      </div>
-      <div>
-        <v>Ordenação:</v> <select id="ordenacao">
-          <option value="aleatorio">Aleatório</option>
-          <option value="invertido">Invertido</option>
-          <option value="repetidas">Partes Repetidas</option>
-          <option value="quaseOrdenado">Quase Ordenado</option>
-        </select>
-      </div>
-      <div class="anim">
-        <v>Duração da Animação:</v><input id="anim" type="number" min="5" max="150" value="5">
-      </div>
-      <bt id="gerar">Gerar Vetor</bt>
-    </form>
-    <integrantes>
-      <integrante>
-        <nome>Fabio Leonam Pereira de Souza</nome>
-        <ra>RA: 1997394</ra>
-      </integrante>
-      <integrante>
-        <nome>Lucas de Almeida</nome>
-        <ra>RA: 1996762</ra>
-      </integrante>
-      <integrante>
-        <nome>Thiago Angelo Martins</nome>
-        <ra>RA: 1997513</ra>
-      </integrante>
-
-    </integrantes>
-
-  </controller>
-  <script>
-    require("./order.js");
-  </script>
-</body>
-
+      <form>
+        <div>
+          <v>Tamanho(10-100):</v
+          ><input id="tamanho" type="number" min="5" max="100" value="50" />
+        </div>
+        <div>
+          <v>Ordenação:</v>
+          <select id="ordenacao">
+            <option value="aleatorio">Aleatório</option>
+            <option value="invertido">Invertido</option>
+            <option value="repetidas">Partes Repetidas</option>
+            <option value="quaseOrdenado">Quase Ordenado</option>
+          </select>
+        </div>
+        <div class="anim">
+          <v>Duração da Animação(5-100):</v
+          ><input id="anim" type="number" min="5" max="150" value="5" />
+        </div>
+        <bt id="gerar">Gerar Vetor</bt>
+      </form>
+      <integrantes>
+        <integrante>
+          <nome>Fabio Leonam Pereira de Souza</nome>
+          <ra>RA: 1997394</ra>
+        </integrante>
+        <integrante>
+          <nome>Lucas de Almeida</nome>
+          <ra>RA: 1996762</ra>
+        </integrante>
+        <integrante>
+          <nome>Thiago Angelo Martins</nome>
+          <ra>RA: 1997513</ra>
+        </integrante>
+      </integrantes>
+    </controller>
+    <script>
+      require("./order.js")
+    </script>
+  </body>
 </html>
